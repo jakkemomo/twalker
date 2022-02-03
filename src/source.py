@@ -1,11 +1,10 @@
 import datetime
-import logging
 import os
 from abc import abstractmethod
 
 import requests
 
-from src.utils import SingletonMeta
+from src.utils import SingletonMeta, logger
 
 
 class InformationSource(metaclass=SingletonMeta):
@@ -44,7 +43,7 @@ class TwitterSource(InformationSource):
         try:
             json_response = self._connect_to_endpoint(url[0], self._headers, url[1])
         except ConnectionError as e:
-            logging.error(e)
+            logger.error(e)
         return json_response
 
     @staticmethod
@@ -68,7 +67,7 @@ class TwitterSource(InformationSource):
     def _connect_to_endpoint(url, headers, params, next_token=None) -> dict:
         params['next_token'] = next_token
         response = requests.request("GET", url, headers=headers, params=params)
-        logging.debug("Endpoint Response Code: %s", str(response.status_code))
+        logger.debug("Endpoint Response Code: %s", str(response.status_code))
         if response.status_code != 200:
             raise ConnectionError(response.status_code, response.text)
         return response.json()
