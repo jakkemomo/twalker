@@ -3,7 +3,7 @@ from abc import abstractmethod
 
 import telegram
 
-from utils import SingletonMeta, logger
+from src.utils import SingletonMeta, logger
 
 
 class Notifier(metaclass=SingletonMeta):

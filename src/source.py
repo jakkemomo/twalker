@@ -5,7 +5,7 @@ from abc import abstractmethod
 
 import requests
 
-from utils import SingletonMeta
+from src.utils import SingletonMeta
 
 
 class InformationSource(metaclass=SingletonMeta):

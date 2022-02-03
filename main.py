@@ -1,8 +1,8 @@
 import time
 from typing import List
 
-from notifier import Notifier, TelegramNotifier
-from source import InformationSource, TwitterSource
+from src.notifier import Notifier, TelegramNotifier
+from src.source import InformationSource, TwitterSource
 
 
 def main(notifier: Notifier, information_sources: List[InformationSource]) -> None:
