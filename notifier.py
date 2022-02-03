@@ -14,11 +14,10 @@ class Notifier(metaclass=SingletonMeta):
 
 class TelegramNotifier(Notifier):
     def __init__(self):
-        self._token = self.get_telegram_token()
         self._bot = telegram.Bot(token=self._token)
 
-    @staticmethod
-    def get_telegram_token():
+    @property
+    def _token(self):
         token = os.getenv('TELEGRAM_BOT_TOKEN')
         if not token:
             raise ValueError(
@@ -28,14 +27,5 @@ class TelegramNotifier(Notifier):
         return token
 
     def notify(self, data):
-        logger.info(f"Notification from Twitter: {data}")
+        logger.info(f"New notification: {data}")
         self._bot.send_message(text='https://twitter.com/elonmusk/status/1486846468887560201', chat_id=-746170969)
-
-
-if __name__ == "__main__":
-    notifier1 = TelegramNotifier()
-    notifier2 = TelegramNotifier()
-    notifier3 = TelegramNotifier()
-    notifier4 = TelegramNotifier()
-    if id(notifier1) == id(notifier2) == id(notifier3) == id(notifier4):
-        print("Success")

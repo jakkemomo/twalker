@@ -1,11 +1,14 @@
 import datetime
+import logging
 import os
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
 import requests
 
+from utils import SingletonMeta
 
-class InformationSource(ABC):
+
+class InformationSource(metaclass=SingletonMeta):
     _urls = set()
 
     def add_url(self, url):
@@ -14,35 +17,38 @@ class InformationSource(ABC):
     def parse(self) -> dict:
         data = {}
         for url in self._urls:
-            response = self.request_information(url)
+            response = self._request_information(url)
             if response:
                 data[url] = response
         return data
 
     @abstractmethod
-    def request_information(self, url, *args, **kwargs) -> dict:
+    def _request_information(self, url, *args, **kwargs) -> dict:
         pass
 
 
 class TwitterSource(InformationSource):
 
-    def __init__(self):
-        self._type = 'twitter'
-        self._access_token = self.auth()
-        self._headers = self.create_headers(self._access_token)
-        now = datetime.datetime.now()
-        self._end_time = now.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
-        self._start_time = (now - datetime.timedelta(hours=8)).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
-        self._max_results = 15
+    def __init__(self, max_results=15):
+        self.type = 'twitter'
+        self.max_results = max_results
+        self._headers = {"Authorization": f"Bearer {self._token}"}
 
-    def request_information(self, user_id, *args, **kwargs):
-        pass
-        # url = self.create_url(user_id, self._start_time, self._end_time, self._max_results)
-        # json_response = self.connect_to_endpoint(url[0], self._headers, url[1])
-        # return json_response
+        time_now = datetime.datetime.now()
+        self._end_time = (time_now + datetime.timedelta(hours=8)).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+        self._start_time = (time_now - datetime.timedelta(hours=8)).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+
+    def _request_information(self, user_id, *args, **kwargs):
+        url = self._create_url(user_id, self._start_time, self._end_time, self.max_results)
+        json_response = {}
+        try:
+            json_response = self._connect_to_endpoint(url[0], self._headers, url[1])
+        except ConnectionError as e:
+            logging.error(e)
+        return json_response
 
     @staticmethod
-    def create_url(user_id, start_date, end_date, max_results=10):
+    def _create_url(user_id, start_date, end_date, max_results=10):
         search_url = "https://api.twitter.com/2/tweets/search/all"  # Change to the endpoint you want to collect data from
 
         # change params based on the endpoint you are using
@@ -58,21 +64,16 @@ class TwitterSource(InformationSource):
         return search_url, query_params
 
     @staticmethod
-    def connect_to_endpoint(url, headers, params, next_token=None):
+    def _connect_to_endpoint(url, headers, params, next_token=None):
         params['next_token'] = next_token  # params object received from create_url function
         response = requests.request("GET", url, headers=headers, params=params)
         print("Endpoint Response Code: " + str(response.status_code))
         if response.status_code != 200:
-            raise Exception(response.status_code, response.text)
+            raise ConnectionError(response.status_code, response.text)
         return response.json()
 
-    @staticmethod
-    def create_headers(bearer_token):
-        headers = {"Authorization": "Bearer {}".format(bearer_token)}
-        return headers
-
-    @staticmethod
-    def auth():
+    @property
+    def _token(self):
         token = os.getenv('TWITTER_TOKEN')
         if not token:
             raise ValueError(
