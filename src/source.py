@@ -11,7 +11,7 @@ from src.utils import SingletonMeta
 class InformationSource(metaclass=SingletonMeta):
     _urls = set()
 
-    def add_url(self, url):
+    def add_url(self, url) -> None:
         self._urls.add(url)
 
     def parse(self) -> dict:
@@ -38,7 +38,7 @@ class TwitterSource(InformationSource):
         self._end_time = (time_now + datetime.timedelta(hours=8)).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
         self._start_time = (time_now - datetime.timedelta(hours=8)).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
-    def _request_information(self, user_id, *args, **kwargs):
+    def _request_information(self, user_id, *args, **kwargs) -> dict:
         url = self._create_url(user_id, self._start_time, self._end_time, self.max_results)
         json_response = {}
         try:
@@ -64,7 +64,7 @@ class TwitterSource(InformationSource):
         return search_url, query_params
 
     @staticmethod
-    def _connect_to_endpoint(url, headers, params, next_token=None):
+    def _connect_to_endpoint(url, headers, params, next_token=None) -> dict:
         params['next_token'] = next_token  # params object received from create_url function
         response = requests.request("GET", url, headers=headers, params=params)
         print("Endpoint Response Code: " + str(response.status_code))
@@ -73,7 +73,7 @@ class TwitterSource(InformationSource):
         return response.json()
 
     @property
-    def _token(self):
+    def _token(self) -> str:
         token = os.getenv('TWITTER_TOKEN')
         if not token:
             raise ValueError(

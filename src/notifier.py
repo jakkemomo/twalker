@@ -8,7 +8,7 @@ from src.utils import SingletonMeta, logger
 
 class Notifier(metaclass=SingletonMeta):
     @abstractmethod
-    def notify(self, *args, **kwargs):
+    def notify(self, *args, **kwargs) -> None:
         pass
 
 
@@ -17,7 +17,7 @@ class TelegramNotifier(Notifier):
         self._bot = telegram.Bot(token=self._token)
 
     @property
-    def _token(self):
+    def _token(self) -> str:
         token = os.getenv('TELEGRAM_BOT_TOKEN')
         if not token:
             raise ValueError(
@@ -26,6 +26,6 @@ class TelegramNotifier(Notifier):
             )
         return token
 
-    def notify(self, data):
+    def notify(self, data) -> None:
         logger.info(f"New notification: {data}")
         self._bot.send_message(text='https://twitter.com/elonmusk/status/1486846468887560201', chat_id=-746170969)

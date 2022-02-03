@@ -5,13 +5,14 @@ from src.notifier import Notifier, TelegramNotifier
 from src.source import InformationSource, TwitterSource
 
 
-def main(notifier: Notifier, information_sources: List[InformationSource]) -> None:
+def main(notifiers: List[Notifier], information_sources: List[InformationSource]) -> None:
     while True:
         for source in information_sources:
             data: dict = source.parse()
             if data:
-                notifier.notify(data)
-        time.sleep(4)
+                for notifier in notifiers:
+                    notifier.notify(data)
+        time.sleep(10)
 
 
 if __name__ == '__main__':
@@ -19,5 +20,6 @@ if __name__ == '__main__':
     twitter = TwitterSource()
     twitter.add_url('1234')
     twitter.add_url('12345')
-    sources = [twitter]
-    main(telegram_notifier, sources)
+    client_sources = [twitter]
+    client_notifiers = [telegram_notifier]
+    main(client_notifiers, client_sources)
