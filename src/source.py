@@ -1,10 +1,9 @@
 import datetime
-import os
 from abc import abstractmethod
 
 import requests
 
-from src.utils import SingletonMeta, logger
+from src.utils import SingletonMeta, logger, get_environment_variable
 
 
 class InformationSource(metaclass=SingletonMeta):
@@ -31,6 +30,7 @@ class TwitterSource(InformationSource):
     def __init__(self, max_results=15):
         self.type = 'twitter'
         self.max_results = max_results
+        self._token = get_environment_variable('TWITTER_TOKEN')
         self._headers = {"Authorization": f"Bearer {self._token}"}
 
         time_now = datetime.datetime.now()
@@ -72,12 +72,3 @@ class TwitterSource(InformationSource):
             raise ConnectionError(response.status_code, response.text)
         return response.json()
 
-    @property
-    def _token(self) -> str:
-        token = os.getenv('TWITTER_TOKEN')
-        if not token:
-            raise ValueError(
-                """Twitter token is not set.
-                 Please set environment variable called TWITTER_TOKEN with value of your twitter access key."""
-            )
-        return token

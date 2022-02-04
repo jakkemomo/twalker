@@ -1,9 +1,8 @@
-import os
 from abc import abstractmethod
 
 import telegram
 
-from src.utils import SingletonMeta, logger
+from src.utils import SingletonMeta, logger, get_environment_variable
 
 
 class Notifier(metaclass=SingletonMeta):
@@ -14,18 +13,10 @@ class Notifier(metaclass=SingletonMeta):
 
 class TelegramNotifier(Notifier):
     def __init__(self):
+        self._chat_id = get_environment_variable('TELEGRAM_CHAT_ID')
+        self._token = get_environment_variable('TELEGRAM_BOT_TOKEN')
         self._bot = telegram.Bot(token=self._token)
-
-    @property
-    def _token(self) -> str:
-        token = os.getenv('TELEGRAM_BOT_TOKEN')
-        if not token:
-            raise ValueError(
-                """Telegram token is not set.
-                 Please set environment variable called TELEGRAM_BOT_TOKEN with value of your telegram token."""
-            )
-        return token
 
     def notify(self, data) -> None:
         logger.info(f"New notification: {data}")
-        self._bot.send_message(text='https://twitter.com/elonmusk/status/1486846468887560201', chat_id=-746170969)
+        self._bot.send_message(text='https://twitter.com/elonmusk/status/1486846468887560201', chat_id=self._chat_id)

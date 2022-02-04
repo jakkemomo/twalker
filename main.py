@@ -8,10 +8,10 @@ from src.source import InformationSource, TwitterSource
 def main(notifiers: List[Notifier], information_sources: List[InformationSource]) -> None:
     while True:
         for source in information_sources:
-            data: dict = source.parse()
-            if data:
+            messages: dict = source.parse()
+            if messages:
                 for notifier in notifiers:
-                    notifier.notify(data)
+                    notifier.notify(messages)
         time.sleep(10)
 
 
