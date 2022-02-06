@@ -5,9 +5,8 @@ from abc import abstractmethod
 import pytz
 import requests
 
+from src.settings import DEFAULT_SLEEP_TIME, FOLLOWER_COUNT_LIMIT
 from src.utils import SingletonMeta, logger, get_environment_variable
-
-FOLLOWER_COUNT_LIMIT = 500000
 
 
 class InformationSource(metaclass=SingletonMeta):
@@ -46,8 +45,9 @@ class TwitterSource(InformationSource):
             influences_messages = self._get_influencer_messages(user_id)
             related_messages = self._get_related_messages(user_id)
             messages = {**related_messages, **influences_messages}
-            time_now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
-            self._start_time = (time_now - datetime.timedelta(seconds=11)).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+            if messages:
+                time_now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+                self._start_time = (time_now - datetime.timedelta(seconds=DEFAULT_SLEEP_TIME)).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
         except ConnectionError as e:
             logger.error(e)
         return messages

@@ -2,9 +2,8 @@ import time
 from typing import List
 
 from src.notifier import Notifier, TelegramNotifier
+from src.settings import DEFAULT_SLEEP_TIME
 from src.source import InformationSource, TwitterSource
-
-DEFAULT_SLEEP_TIME = 20
 
 
 def main(notifiers: List[Notifier], information_sources: List[InformationSource]) -> None:
