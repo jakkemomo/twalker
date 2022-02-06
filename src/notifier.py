@@ -19,4 +19,8 @@ class TelegramNotifier(Notifier):
 
     def notify(self, data) -> None:
         logger.info(f"New notification: {data}")
-        self._bot.send_message(text='https://twitter.com/elonmusk/status/1486846468887560201', chat_id=self._chat_id)
+        for influencer, messages in data.items():
+            telegram_response = ""
+            for sender, message in messages.items():
+                telegram_response += f"{sender.upper()}: {message} \n\n\n\n\n\n"
+            self._bot.send_message(text=telegram_response, chat_id=self._chat_id)
