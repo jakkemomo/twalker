@@ -12,3 +12,4 @@
 - Add influencer account name from selected source of information (e.g. elonmusk)
 - Type "Start" to initiate stalking
 ##### At this point program will start stalking the influencer: each new message connected to this person will be sent to Telegram Channel.
+![img.png](img.png)
