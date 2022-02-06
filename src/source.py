@@ -38,7 +38,7 @@ class TwitterSource(InformationSource):
         self._headers = {"Authorization": f"Bearer {self._token}"}
 
         time_now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
-        self._start_time = (time_now - datetime.timedelta(days=6)).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+        self._start_time = (time_now - datetime.timedelta(hours=9)).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
     def _request_information(self, user_id, *args, **kwargs) -> dict:
         messages = {}
