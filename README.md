@@ -13,3 +13,9 @@
 - Type "Start" to initiate stalking
 ##### At this point program will start stalking the influencer: each new message connected to this person will be sent to Telegram Channel.
 ![img.png](img.png)
+
+##### Task list:
+- [x] Add Twitter source
+- [x] Add Telegram notifier
+- [ ] Add Telegram source
+- [ ] Add Instagram source
