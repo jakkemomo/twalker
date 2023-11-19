@@ -7,8 +7,8 @@ from src.utils import SingletonMeta, logger, get_environment_variable
 
 class Notifier(metaclass=SingletonMeta):
     @abstractmethod
-    def notify(self, *args, **kwargs) -> None:
-        pass
+    def notify(self, data) -> None:
+        ...
 
 
 class TelegramNotifier(Notifier):
