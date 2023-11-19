@@ -24,8 +24,8 @@ class InformationSource(metaclass=SingletonMeta):
         return data
 
     @abstractmethod
-    def _request_information(self, url, *args, **kwargs) -> dict:
-        pass
+    def _request_information(self, url) -> dict:
+        ...
 
 
 class TwitterSource(InformationSource):
@@ -39,7 +39,7 @@ class TwitterSource(InformationSource):
         time_now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
         self._start_time = (time_now - datetime.timedelta(hours=9)).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
-    def _request_information(self, user_id, *args, **kwargs) -> dict:
+    def _request_information(self, user_id) -> dict:
         messages = {}
         try:
             influences_messages = self._get_influencer_messages(user_id)
